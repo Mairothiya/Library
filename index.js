@@ -115,18 +115,85 @@ function showList () {
     let libraryForm = localStorage.getItem("libraryForm");
     if(libraryForm){
         array = JSON.parse(libraryForm);
-        let html = "";
-        let i = 1;
-        array.forEach(function(libraryForm) {
+        DisplayList(array);
+    }
+};
 
-        html += `<tr>
-            <td>${i++}</td>
-                                <td>${libraryForm.name}</td>    
-                                <td>${libraryForm.author}</td>
-                                <td>${libraryForm.type}</td>
-                                </tr>`;
-    })
+//display list
+function DisplayList(array){
+    let html = "";
+    let i = 1;
+    array.forEach(function(libraryForm) {
+
+    html += `<tr>
+        <td>${i++}</td>
+                            <td class="bookName" style="word-break: break-word;">${libraryForm.name}</td>    
+                            <td class="authorName" style="word-break: break-word;">${libraryForm.author}</td>
+                            <td class="type" style="word-break: break-word;">${libraryForm.type}</td>
+                            </tr>`;
+    });
     let tableBody = document.getElementById("tableBody");
     tableBody.innerHTML = html;
+}
+
+  //search by button
+function changeSearchButton(value){
+    let searching = document.getElementById("dropdownMenuButton1");
+    searching.innerHTML = `Search by ${value}`;
+}
+
+function nameVar(value){
+    return document.getElementById(`search${value}`)
+}
+
+function searchButton(value){
+    nameVar(value).addEventListener("click",function(e){
+        e.preventDefault();
+        changeSearchButton(value)
+        return value;
+    })
+}
+
+searchButton("Author")
+searchButton("Type")
+searchButton("Name")
+
+// search bar 
+let search = document.getElementById("search");
+search.addEventListener("input",function(){
+    let input = search.value.toLowerCase();
+    if(document.getElementById("dropdownMenuButton1").innerHTML === "Search by"){
+        let alertBox = document.getElementById("msg");
+        let alert;
+        alert = `<div class="alert alert-danger d-flex align-items-center" role="alert">
+                      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                            <div>
+                            Select search by
+                        </div>
+                    </div>`
+            alertBox.innerHTML = alert;
+            setTimeout(function() {
+                alertBox.innerHTML = "";
+            }, 2000);
     }
-  };
+    else{
+        searchIn = document.getElementById("dropdownMenuButton1").innerHTML.slice(10).toLowerCase();
+        console.log(searchIn);
+    }
+    let newArray;
+    if(searchIn === "name"){
+        newArray= array.filter(function(element){
+            return element.name.includes(input);
+        })
+    }else if(searchIn === "author"){
+        newArray= array.filter(function(element){
+            return element.author.includes(input);
+        })
+    }else if(searchIn === "type"){
+        newArray= array.filter(function(element){
+            return element.type.includes(input);
+        })
+    }
+    DisplayList(newArray);
+});
+
